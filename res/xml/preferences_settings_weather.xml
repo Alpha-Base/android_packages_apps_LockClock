@@ -20,33 +20,33 @@
 
     <ListPreference
         android:key="weather_source"
+        android:title="@string/weather_source_title"
         android:defaultValue="yahoo"
         android:summary="%s"
         android:entries="@array/weather_source_entries"
-        android:entryValues="@array/weather_source_values"
-        android:title="@string/weather_source_title" />
+        android:entryValues="@array/weather_source_values" />
 
     <ListPreference
         android:key="weather_refresh_interval"
+        android:title="@string/weather_refresh_interval"
         android:defaultValue="60"
         android:summary="%s"
         android:entries="@array/weather_interval_entries"
-        android:entryValues="@array/weather_interval_values"
-        android:title="@string/weather_refresh_interval" />
+        android:entryValues="@array/weather_interval_values" />
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:key="weather_use_custom_location"
         android:title="@string/weather_use_custom_location"
         android:defaultValue="false" />
 
     <com.cyanogenmod.lockclock.preference.CustomLocationPreference
         android:key="weather_custom_location_city"
+        android:title="@string/weather_custom_location_title"
         android:dependency="weather_use_custom_location"
         android:dialogTitle="@string/weather_custom_location_dialog_title"
-        android:hint="@string/weather_custom_location_hint"
-        android:title="@string/weather_custom_location_title" />
+        android:hint="@string/weather_custom_location_hint" />
 
-    <CheckBoxPreference
+    <SwitchPreference
         android:key="weather_use_metric"
         android:title="@string/weather_use_metric" />
 

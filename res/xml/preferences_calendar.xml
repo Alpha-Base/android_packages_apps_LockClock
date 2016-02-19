@@ -21,69 +21,69 @@
     <PreferenceCategory
         android:title="@string/general_category" >
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="show_calendar"
             android:title="@string/calendar_title"
             android:defaultValue="false" />
 
         <MultiSelectListPreference
             android:key="calendar_list"
+            android:title="@string/calendars_title"
             android:dependency="show_calendar"
             android:dialogTitle="@string/calendars_title"
-            android:title="@string/calendars_title"
             android:summary="@string/calendars_summary"
             android:defaultValue="@array/empty_array" />
 
         <ListPreference
             android:key="calendar_lookahead"
+            android:title="@string/calendar_lookahead_title"
             android:dependency="show_calendar"
             android:summary="%s"
             android:dialogTitle="@string/calendar_lookahead_title"
-            android:title="@string/calendar_lookahead_title"
             android:defaultValue="1209600000"
             android:entries="@array/calendar_lookahead_entries"
             android:entryValues="@array/calendar_lookahead_values" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="calendar_reminders_only"
-            android:dependency="show_calendar"
             android:title="@string/calendar_reminders_only_title"
+            android:dependency="show_calendar"
             android:summary="@string/calendar_reminders_only_summary"
             android:defaultValue="false" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="calendar_hide_allday"
-            android:dependency="show_calendar"
             android:title="@string/calendar_hide_allday_title"
+            android:dependency="show_calendar"
             android:defaultValue="false" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/display_category" >
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="calendar_icon"
-            android:dependency="show_calendar"
             android:title="@string/calendar_icon_title"
+            android:dependency="show_calendar"
             android:defaultValue="true" />
 
         <ListPreference
             android:key="calendar_show_location"
+            android:title="@string/calendar_show_location_title"
             android:dependency="show_calendar"
             android:summary="%s"
             android:defaultValue="0"
             android:dialogTitle="@string/calendar_show_location_title"
-            android:title="@string/calendar_show_location_title"
             android:entries="@array/calendar_show_event_metadata_entries"
             android:entryValues="@array/calendar_show_event_metadata_values" />
 
         <ListPreference
             android:key="calendar_show_description"
+            android:title="@string/calendar_show_description_title"
             android:dependency="show_calendar"
             android:summary="%s"
             android:defaultValue="0"
             android:dialogTitle="@string/calendar_show_description_title"
-            android:title="@string/calendar_show_description_title"
             android:entries="@array/calendar_show_event_metadata_entries"
             android:entryValues="@array/calendar_show_event_metadata_values" />
 
@@ -107,17 +107,17 @@
     <PreferenceCategory
         android:title="@string/calendar_upcoming_events_category" >
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="calendar_highlight_upcoming_events"
-            android:dependency="show_calendar"
             android:title="@string/calendar_highlight_upcoming_events_title"
+            android:dependency="show_calendar"
             android:summary="@string/calendar_highlight_upcoming_events_summary"
             android:defaultValue="false" />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="calendar_highlight_upcoming_events_bold"
-            android:dependency="calendar_highlight_upcoming_events"
             android:title="@string/calendar_highlight_upcoming_events_bold"
+            android:dependency="calendar_highlight_upcoming_events"
             android:defaultValue="false" />
 
         <ListPreference
