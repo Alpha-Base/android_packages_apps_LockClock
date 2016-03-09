@@ -16,6 +16,7 @@
 
 package com.cyanogenmod.lockclock.preference;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
@@ -23,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -43,6 +45,7 @@ import com.cyanogenmod.lockclock.weather.WeatherUpdateService;
 public class WeatherSettingPreferences extends PreferenceFragment implements
         SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "WeatherSettingPreferences";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private static final String[] LOCATION_PREF_KEYS = new String[] {
         Constants.WEATHER_USE_CUSTOM_LOCATION,
@@ -58,6 +61,7 @@ public class WeatherSettingPreferences extends PreferenceFragment implements
 
     private Context mContext;
     private ContentResolver mResolver;
+    private Runnable mPostResumeRunnable;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,7 +71,7 @@ public class WeatherSettingPreferences extends PreferenceFragment implements
         mContext = getActivity();
         mResolver = mContext.getContentResolver();
 
-        getActivity().getActionBar().setTitle(getResources().getString(R.string.weather_category));
+        getActivity().getActionBar().setTitle(getResources().getString(R.string.preferences_settings_weather_title));
 
         // Load items that need custom summaries etc.
         mUseCustomLoc = (SwitchPreference) findPreference(Constants.WEATHER_USE_CUSTOM_LOCATION);
@@ -81,10 +85,15 @@ public class WeatherSettingPreferences extends PreferenceFragment implements
         Preferences.setUseMetricUnits(mContext, defValue);
         mUseMetric.setChecked(defValue);
 
-        // Show a warning if location manager is disabled and there is no custom location set
-        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (!lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && !mUseCustomLoc.isChecked()) {
-            showDialog();
+        if (!hasLocationPermission()) {
+            String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION};
+            requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            // Show a warning if location manager is disabled and there is no custom location set
+            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            if (!lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && !mUseCustomLoc.isChecked()) {
+                showDialog();
+            }
         }
     }
 
@@ -93,6 +102,15 @@ public class WeatherSettingPreferences extends PreferenceFragment implements
         super.onResume();
 
         getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+        if (mPostResumeRunnable != null) {
+            // We only get here after the user granted permission,
+            // show a warning if location manager is disabled,
+            // and there is no custom location set
+            mPostResumeRunnable.run();
+            mPostResumeRunnable = null;
+        }
+
         updateLocationSummary();
     }
 
@@ -159,6 +177,11 @@ public class WeatherSettingPreferences extends PreferenceFragment implements
         mContext.sendBroadcast(updateIntent);
     }
 
+    private boolean hasLocationPermission() {
+        return mContext.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
     //===============================================================================================
     // Utility classes and supporting methods
     //===============================================================================================
@@ -172,6 +195,25 @@ public class WeatherSettingPreferences extends PreferenceFragment implements
             mCustomWeatherLoc.setSummary(location);
         } else {
             mCustomWeatherLoc.setSummary(R.string.weather_geolocated);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                if (!lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && !mUseCustomLoc.isChecked()) {
+                    mPostResumeRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            showDialog();
+                        }
+                    };
+                }
+            }
         }
     }
 

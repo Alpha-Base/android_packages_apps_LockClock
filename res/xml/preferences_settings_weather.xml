@@ -16,7 +16,7 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="weather_settings"
-    android:title="@string/weather_category">
+    android:title="@string/preferences_settings_weather_title">
 
     <ListPreference
         android:key="weather_source"
